@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Covid-19 </title>
+    <link rel="icon" href="./viruos.png" type="image/icon type">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            color: white;
+            background: linear-gradient(to right, #6850bd 20%, #6850bd 30%, #3e51c0 70%, #3e51c0 70%);
+        }
+
+        ul {
+            padding: 0;
+            list-style-type: none;
+        }
+
+        ul li {
+            border: 1px solid white;
+
+            box-sizing: border-box;
+            width: 15em;
+            height: 3em;
+            font-size: 20px;
+            border-radius: 0.5em;
+            margin: 0.5em;
+            box-shadow: 0 0 1em rgba(0, 0, 0, 0.2);
+            color: white;
+            font-family: sans-serif;
+            text-transform: capitalize;
+            line-height: 3em;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        ul li:nth-child(odd) {
+            background: linear-gradient(to right, #624bb2, #3e51c0);
+            text-align: left;
+            padding-left: 10%;
+            transform: perspective(500px) rotateY(45deg);
+        }
+
+        ul li:nth-child(even) {
+            background: linear-gradient(to left, #624bb2, #3e51c0);
+            text-align: right;
+            padding-right: 10%;
+            transform: perspective(500px) rotateY(-45deg);
+        }
+
+        ul li:nth-child(odd):hover {
+            transform: perspective(200px) rotateY(45deg);
+            padding-left: 5%;
+        }
+
+        ul li:nth-child(even):hover {
+            transform: perspective(200px) rotateY(-45deg);
+            padding-right: 5%;
+        }
+
+
+        main {
+            position: relative;
+            margin: auto;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            padding: 18vh 0;
+        }
+
+        button {
+            outline: 0;
+            font-size: 1em;
+            font-weight: 600;
+            background: #fff;
+            border: none;
+            padding: 2em 4em;
+            transition: all .3s ease-out;
+            box-shadow: inset 0 -8px 0 0 rgba(0, 0, 0, .2),
+                1px 1px 0 0 #624bb2,
+                2px 2px 0 0 #624bb2,
+                3px 3px 0 0 #624bb2,
+                4px 4px 0 0 #624bb2,
+                5px 5px 0 0 #624bb2,
+                6px 6px 0 0 #624bb2,
+                7px 7px 0 0 #624bb2,
+                8px 8px 0 0 #624bb2,
+                9px 9px 0 0 #624bb2,
+                10px 10px 0 0 #624bb2,
+                11px 11px 0 0#624bb2,
+                12px 12px 0 0 black;
+        }
+
+        button:hover {
+            color: #444;
+        }
+
+        button:active {
+            color: #222;
+            box-shadow: inset 0 -4px 0 0 rgba(0, 0, 0, .2),
+                1px 1px 0 0 white,
+                2px 2px 0 0 white,
+                3px 3px 0 0 white,
+                4px 4px 0 0 white,
+                5px 5px 0 0 white;
+        }
+
+        h1 {
+            margin-top: 4%;
+            text-align: center;
+        }
+
+        ul {
+            display: flex;
+        }
+
+        /* .right img {
+            position: absolute;
+            right: 13%;
+            width: 600px;
+            height: 500px;
+            bottom: 1%;
+        } */
+    </style>
+</head>
+
+<body>
+    <h1>Covid 19 stats</h1>
+    <canvas id="mygraph"></canvas>
+    <div>
+        <ul>
+            <li id="confirmed">Cases</li>
+            <li id="critical">Critical</li>
+            <li id="deaths">Deaths</li>
+            <li id="recovered">Recovered</li>
+        </ul>
+    </div>
+    <main>
+        <button id="btn-asia">Asia</button>
+        <button id="btn-europe">Europe</button>
+        <button id="btn-africa">Africa</button>
+        <button id="btn-america">America</button>
+        <button id="btn-ustralia">Ustralia</button>
+    </main>
+    <section id="page-1">
+
+
+    </section>
+    <script>
+        let land = ' ';
+        let obj = {};
+        let specificInfo = '';
+        let axisX = [];
+        let axisY = [];
+        let worldArr = [asiaArr = [], europeArr = [], africaArr = [], americaArr = [], ustraliaArr = []];
+        let dataWorldArr = [asiaObj = [], europeObj = [], africaObj = [], americaObj = [], ustraliaObj = []];
+        document.getElementById('btn-asia').addEventListener("click", sendToGraph);
+        document.getElementById('btn-europe').addEventListener("click", sendToGraph);
+        document.getElementById('btn-africa').addEventListener("click", sendToGraph);
+        document.getElementById('btn-america').addEventListener("click", sendToGraph);
+        document.getElementById('btn-ustralia').addEventListener("click", sendToGraph);
+
+        document.getElementById('confirmed').addEventListener("click", viewSpecificInfo);
+        document.getElementById('critical').addEventListener("click", viewSpecificInfo);
+        document.getElementById('deaths').addEventListener("click", viewSpecificInfo);
+        document.getElementById('recovered').addEventListener("click", viewSpecificInfo);
+
+        start();
+
+        async function start() {
+            await createAfricaArr();
+            await createEuropeArr();
+            await createAsiaArr();
+            await createAmericaArr();
+            await allCountrises();
+        }
+        function viewSpecificInfo(event) {
+            console.log('li.id', event.target.id);
+            switch (event.target.id) {
+                case 'confirmed':
+                    specificInfo = 'confirmed';
+                    console.log(specificInfo);
+                    break;
+                case 'critical':
+                    specificInfo = 'critical';
+                    console.log(specificInfo);
+                    break;
+                case 'deaths':
+                    specificInfo = 'deaths';
+                    console.log(specificInfo);
+                    break;
+                case 'recovered':
+                    specificInfo = 'recovered';
+                    console.log(specificInfo);
+                    break;
+                default:
+                    console.log('default-li');
+            }
+        }
+
+        function sendToGraph(event) {
+            if (specificInfo === ' ') {
+                return alert('You have not selected specific viewing information');
+            }
+            alert(event.target.id);
+            console.log('btn.id', event.target.id);
+            switch (event.target.id) {
+                case 'btn-asia':
+                    fillArrXandY(0);
+                    chartIt();
+                    break;
+                case 'btn-europe':
+                    fillArrXandY(1);
+                    chartIt();
+                    break;
+                case 'btn-africa':
+                    fillArrXandY(2);
+                    chartIt();
+                    break;
+                case 'btn-america':
+                    fillArrXandY(3);
+                    chartIt();
+                    break;
+                case 'btn-ustralia':
+                    fillArrXandY(4);
+                    chartIt();
+                    break;
+                default:
+            }
+
+        }
+        async function fillArrXandY(index) {
+            if(axisX.length!==0){
+                axisX = [];
+            }
+            if(axisY.length!==0){
+                axisY = [];
+            }
+            for (let i = 0; i < dataWorldArr[index].length; i++) {
+                let name = await dataWorldArr[index][i]['name'];
+                let specific = await dataWorldArr[index][i][specificInfo];
+                axisY.push(specific);
+                axisX.push(name);
+            }
+            console.log('axisX', axisX);
+            console.log('axisY', axisY);
+
+            return { axisX, axisY };
+        }
+
+
+        function chartIt() {
+            // await start();
+            let ctx = document.getElementById('mygraph').getContext('2d');
+            var chart = new Chart(ctx, {
+                // The type of chart we want to create
+                type: 'bar',
+
+                // The data for our dataset
+                data: {
+                    labels: axisX,
+                    datasets: [
+                        {
+                            label: specificInfo,
+                            data: axisY,
+                            backgroundColor: 'rgb(255, 99, 132)',
+                            borderColor: 'rgb(255, 99, 132)',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {}
+                // Configuration options go here
+                // options: {
+                //     title: {
+                //         display: true,
+                //         text: 'Chart.js Line Chart - Animation Progress Bar'
+                //     },
+                //     // scale: {
+                //     //     yAxes:[
+                //     //         {
+                //     //             callback: function(value,index,values) {
+                //     //                 return value;
+                //     //             }
+                //     //         }
+                //     //     ]
+                //     // }
+                // }
+            });
+
+
+        }
+
+
+
+        async function infoApi(code) {
+            const baseUrl = `https://cors-anywhere.herokuapp.com/corona-api.com/countries/${code}`;
+            const res = await fetch(`${baseUrl}`);
+            const data = await res.json();
+            // console.log('data',data);
+            return data;
+        }
+
+        async function getLand() {
+            const landUrl = `https://cors-anywhere.herokuapp.com/restcountries.herokuapp.com/api/v1/region/${land}`;
+            const resland = await fetch(`${landUrl}`);
+            const dataland = await resland.json();
+            console.log('dataland', dataland);
+            return dataland;
+        }
+
+        async function createAsiaArr() {
+            land = 'asia';
+            let asia = await getLand();
+            for (let i = 0; i < asia.length; i++) {
+                asiaArr.push(asia[i]['cca2']);
+            }
+            // console.log('asiaArr', asiaArr);
+        };
+
+
+        async function createEuropeArr() {
+            land = 'europe';
+            let europe = await getLand();
+            for (let i = 0; i < europe.length; i++) {
+                europeArr.push(europe[i]['cca2']);
+            }
+            // console.log('europeArr', europeArr);
+        };
+
+
+        async function createAfricaArr() {
+            land = 'africa';
+            let africa = await getLand();
+            for (let i = 0; i < africa.length; i++) {
+                africaArr.push(africa[i]['cca2']);
+            }
+            // console.log('africaArr', africaArr);
+        };
+
+
+        async function createAmericaArr() {
+            land = 'americas';
+            let america = await getLand();
+            for (let i = 0; i < america.length; i++) {
+                americaArr.push(america[i]['cca2']);
+            }
+            // console.log('americaArr', americaArr);
+        };
+
+        async function allCountrises() {
+
+            for (let i = 0; i < worldArr.length; i++) {
+                for (let j = 0; j < worldArr[i].length; j++) {
+                    if (worldArr[i][j] === 'XK') {
+                        continue;
+                    }
+                    let data = await infoApi(worldArr[i][j]);
+                    let objData = {};
+                    objData.name = data['data']['name'];
+                    objData.confirmed = data['data']['latest_data']['confirmed'];
+                    objData.critical = data['data']['latest_data']['critical'];
+                    objData.deaths = data['data']['latest_data']['deaths'];
+                    objData.recovered = data['data']['latest_data']['recovered'];
+
+                    dataWorldArr[i].push(objData);
+                }
+            }
+
+            // console.log('specificInfo',dataWorldArr[0][1]['deaths'])
+            console.log('dataWorldArr', dataWorldArr);
+        }
+    </script>
+</body>
+
+</html>

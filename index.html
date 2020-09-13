@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Covid-19 </title>
+    <link rel="icon" href="./viruos.png" type="image/icon type">
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            color: white;
+            background: linear-gradient(to right, #6850bd 20%, #6850bd 30%, #3e51c0 70%, #3e51c0 70%);
+        }
+
+        .nav-left img {
+            width: 50px;
+            height: 50px;
+            margin-left: 3%
+        }
+
+        .nav-left p {
+            margin-left: 2%;
+            font-size: 23px;
+            display: inline-block;
+        }
+
+        .left {
+            font-size: 53px;
+        }
+
+        .right {
+            font-size: 23px;
+        }
+
+        #btn-graph {
+            background: #d9d3ee;
+            border: none;
+            border-radius: 50%;
+            padding: 1%;
+            font-size: 20px;
+        }
+
+        .right img {
+            position: absolute;
+            right: 13%;
+            width: 600px;
+            height: 500px;
+            bottom: 1%;
+        }
+
+        #page-1 p {
+            margin-top: 8%;
+        }
+
+        #page-1>div {
+            margin-top: 2%;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <div class="nav-left">
+                <!-- <button>&#9776; </button> -->
+                <img src="./viruos.png">
+                <p>about-corona </p>
+            </div>
+        </nav>
+    </header>
+    <section id="page-1">
+        <p>ABOUT-CORONA.NET</p>
+        <div class="left"><b>Covid-19 information
+                <br>
+                from trusted sources
+                <br>
+                via API</b>
+        </div>
+        <div>
+            A collection of information and development
+            <br>
+            resources for everyone to accelerate
+            <br>
+            application and dashboard implementations
+        </div>
+        <div class="right">
+            <img src="./computer.png">
+        </div>
+        <button id="btn-graph">Results by graphs</button>
+    </section>
+    <script>
+        document.getElementById("btn-graph").onclick = function () {
+            location.href = "./graph.html";
+        };
+    </script>
+
+
+
+</body>
+
+</html>
